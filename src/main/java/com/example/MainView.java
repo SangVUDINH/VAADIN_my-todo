@@ -3,8 +3,11 @@ package com.example;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
@@ -40,27 +43,24 @@ public class MainView extends VerticalLayout {
      * @param service The message service. Automatically injected Spring managed bean.
      */
     public MainView(@Autowired GreetService service) {
+    	
+    	VerticalLayout todosList = new VerticalLayout();
+    	TextField taskField = new TextField();
+    	Button addButton  = new Button("Add");
 
-        // Use TextField for standard text input
-        TextField textField = new TextField("Your name");
-        textField.addThemeName("bordered");
+    	
+    	addButton.addClickShortcut(Key.ENTER);
+    	addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    	addButton.addClickListener(click->{
+    		Checkbox checkbox = new Checkbox(taskField.getValue());
+    		todosList.add(checkbox);
+    	});
+    	
+    	add(new H1("Vaadin Todo"),
+    			todosList, 
+    			new HorizontalLayout(taskField, addButton) );
+    	
 
-        // Button click listeners can be defined as lambda expressions
-        Button button = new Button("Say hello",
-                e -> Notification.show(service.greet(textField.getValue())));
-
-        // Theme variants give you predefined extra styles for components.
-        // Example: Primary button has a more prominent look.
-        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
-        // You can specify keyboard shortcuts for buttons.
-        // Example: Pressing enter in this view clicks the Button.
-        button.addClickShortcut(Key.ENTER);
-
-        // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
-        addClassName("centered-content");
-
-        add(textField, button);
     }
 
 }
